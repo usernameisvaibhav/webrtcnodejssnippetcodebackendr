@@ -2,7 +2,9 @@ const meetingServices = require("../services/meeting.service");
 const { MeetingPayloadEnum } = require("../utils/meeting-payload.enum");
 
 async function joinMeeting(meetingId, socket, meetingServer, payload) {
-    const { userId, userName } = payload;
+    const { userId, name } = payload.data;
+    console.log(meetingId + "this is meeting id" + name);
+
 
     meetingServices.isMeetingPresent(meetingId, async (error, results) => {
         if (error && !results) {
@@ -12,7 +14,8 @@ async function joinMeeting(meetingId, socket, meetingServer, payload) {
         }
         if (results) {
             // const meeting = await meetingServices.joinMeeting(meetingId, userId, userName);
-            addUser(socket, { meetingId, userId, userName }).then((results) => {
+            console.log("working");
+            addUser(socket, { meetingId, userId, name }).then((results) => {
                 if (results) {
                     sendMessage(socket, {
                         type: MeetingPayloadEnum.JOINED_MEETING,
@@ -26,7 +29,7 @@ async function joinMeeting(meetingId, socket, meetingServer, payload) {
                     data: {
                         userId: userId,
 
-                        userName: userName,
+                        userName: name,
                         ...payload.data
                     }
 
@@ -262,7 +265,8 @@ function sendMessage(socket, payload) {
 }
 
 function broadcastUsers(meetingId, socket, meetingServer, payload) {
-    socket.broadcast.emit("message", JSON.stringify(payload));
+    console.log(payload.type + " payload");
+    socket.emit("message", JSON.stringify(payload));
 
 }
 module.exports = {

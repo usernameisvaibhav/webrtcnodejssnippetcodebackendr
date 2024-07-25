@@ -201,6 +201,9 @@ function handleMessage(meetingId, socket, message, meetingServer) {
         case MeetingPayloadEnum.OFFER_SDP:
             meetingHelper.forwardOfferSDP(meetingId, socket, meetingServer, payload);
             break;
+        case MeetingPayloadEnum.ANSWER_SDP:
+            meetingHelper.ANSWER_SDP(meetingId, socket, meetingServer, payload);
+            break;
         case MeetingPayloadEnum.ICE_CANDIDATE:
             meetingHelper.forwardIceCandidate(meetingId, socket, meetingServer, payload);
             break;
@@ -224,7 +227,8 @@ function handleMessage(meetingId, socket, message, meetingServer) {
 function initMeetingServer(server) {
     const meetingServer = require('socket.io')(server);
     meetingServer.on('connection', (socket) => {
-        const meetingId = socket.handshake.query.meetingId;
+        const meetingId = socket.handshake.query.id;
+        console.log(socket.handshake.query);
         console.log(`Client connected with socket ID: ${socket.id}`);
         console.log(`Meeting ID from handshake: ${meetingId}`);
         listenMessage(meetingId, socket, meetingServer);
